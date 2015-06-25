@@ -1,0 +1,26 @@
+<monitor>
+    <name>AWS Custom Namespace Monitor</name>
+    <type>managed</type>
+    <description>AWS Custom Namespace Monitoring Extension</description>
+    <monitor-configuration></monitor-configuration>
+    <monitor-run-task>
+        <execution-style>periodic</execution-style>
+        <execution-frequency-in-seconds>60</execution-frequency-in-seconds>
+        <name>AWS Custom Namespace Monitor Run task</name>
+        <display-name>AWS Custom Namespace Monitor Run task</display-name>
+        <description>AWS Custom Namespace Monitor Run task</description>
+        <type>java</type>
+        <execution-timeout-in-secs>60</execution-timeout-in-secs>
+        
+		<task-arguments>
+			<argument name="config-file" is-required="true" default-value="monitors/AWSCustomNamespaceMonitor/conf/config.yaml" />
+			<argument name="region-endpoints-config" is-required="true" default-value="monitors/AWSCustomNamespaceMonitor/conf/region-endpoints.yaml" />
+		</task-arguments>
+            
+        <java-task>
+            <classpath>aws-customnamespace-monitoring-extension.jar</classpath>
+            <impl-class>com.appdynamics.extensions.aws.customnamespace.CustomNamespaceMonitor</impl-class>
+        </java-task>
+        
+    </monitor-run-task>
+</monitor>
