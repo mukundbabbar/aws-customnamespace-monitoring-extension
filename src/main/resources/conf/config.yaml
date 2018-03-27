@@ -1,16 +1,16 @@
 accounts:
-  - awsAccessKey: ""
-    awsSecretKey: ""
-    displayAccountName: ""
+  - awsAccessKey:
+    awsSecretKey:
+    displayAccountName: "AppD Custom"
     
     # Regions where customnamespace is registered
     # Allowed values: ap-southeast-1, ap-southeast-2, ap-northeast-1, eu-central-1, 
     #                 us-east-1, eu-west-1, us-west-1, us-west-2, sa-east-1
     #
-    regions: ["us-east-1"]
+    regions: ["us-west-2"]
     
     # The custom namespaces registered for this account
-    namespaces: [ ]
+    namespaces: [ "AWS/ElasticBeanstalk" ]
     
 credentialsDecryptionConfig:
     enableDecryption: "false"
@@ -56,4 +56,8 @@ concurrencyConfig:
   noOfMetricThreadsPerRegion: 3
 
 #prefix used to show up metrics in AppDynamics 
-metricPrefix: "Custom Metrics|Amazon Custom Namespace|"
+#metricPrefix: "Custom Metrics|Amazon Custom Namespace|"
+
+#This will create it in specific Tier/Component. Make sure to replace <COMPONENT_ID> with the appropriate one from your environment.
+#To find the <COMPONENT_ID> in your environment, please follow the screenshot https://docs.appdynamics.com/display/PRO42/Build+a+Monitoring+Extension+Using+Java
+metricPrefix: "Server|Component:<COMPONENT_ID>|Custom Metrics|Amazon Custom Namespace|"
