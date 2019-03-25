@@ -12,65 +12,58 @@ import com.appdynamics.extensions.aws.SingleNamespaceCloudwatchMonitor;
 import com.appdynamics.extensions.aws.collectors.NamespaceMetricStatisticsCollector;
 import com.appdynamics.extensions.aws.customnamespace.conf.CustomNamespaceConfiguration;
 import com.appdynamics.extensions.aws.metric.processors.MetricsProcessor;
-import com.google.common.base.Strings;
 import org.apache.log4j.Logger;
 
 import static com.appdynamics.extensions.aws.Constants.METRIC_PATH_SEPARATOR;
 
 /**
  * @author Florencio Sarmiento
- *
  */
 public class CustomNamespaceMonitor extends SingleNamespaceCloudwatchMonitor<CustomNamespaceConfiguration> {
-	
-	private static final Logger LOGGER = Logger.getLogger(CustomNamespaceMonitor.class);
-	
-	private static final String DEFAULT_METRIC_PREFIX = String.format("%s%s%s%s", 
-			"Custom Metrics", METRIC_PATH_SEPARATOR, "Amazon Custom Namespace", METRIC_PATH_SEPARATOR);
 
-	public CustomNamespaceMonitor() {
-		super(CustomNamespaceConfiguration.class);
-	}
+    private static final Logger LOGGER = Logger.getLogger(CustomNamespaceMonitor.class);
 
-	@Override
-	protected String getDefaultMetricPrefix() {
-		return DEFAULT_METRIC_PREFIX;
-	}
+    private static final String DEFAULT_METRIC_PREFIX = String.format("%s%s%s%s",
+            "Custom Metrics", METRIC_PATH_SEPARATOR, "Amazon Custom Namespace", METRIC_PATH_SEPARATOR);
 
-	@Override
-	public String getMonitorName() {
-		return "AWSCustomNamespaceMonitor";
-	}
+    public CustomNamespaceMonitor() {
+        super(CustomNamespaceConfiguration.class);
+    }
 
-	@Override
-	protected int getTaskCount() {
-		return 3;
-	}
+    @Override
+    protected String getDefaultMetricPrefix() {
+        return DEFAULT_METRIC_PREFIX;
+    }
 
-	@Override
-	protected Logger getLogger() {
-		return LOGGER;
-	}
+    @Override
+    public String getMonitorName() {
+        return "AWSCustomNamespaceMonitor";
+    }
 
-	@Override
-	protected NamespaceMetricStatisticsCollector getNamespaceMetricsCollector(CustomNamespaceConfiguration config) {
-		if (!Strings.isNullOrEmpty(config.getNamespace())) {
-			MetricsProcessor metricsProcessor =
-					new CustomNamespaceMetricsProcessor(config.getMetricsConfig().getIncludeMetrics(),
-							config.getDimensions(),
-							config.getNamespace());
+    @Override
+    protected int getTaskCount() {
+        return 3;
+    }
 
-			return new NamespaceMetricStatisticsCollector
-					.Builder(config.getAccounts(),
-					config.getConcurrencyConfig(),
-					config.getMetricsConfig(),
-					metricsProcessor, config.getMetricPrefix())
-					.withCredentialsDecryptionConfig(config.getCredentialsDecryptionConfig())
-					.withProxyConfig(config.getProxyConfig())
-					.build();
-		} else {
-			LOGGER.warn("No namespace is configured for monitoring");
-		}
-		return null;
-	}
+    @Override
+    protected Logger getLogger() {
+        return LOGGER;
+    }
+
+    @Override
+    protected NamespaceMetricStatisticsCollector getNamespaceMetricsCollector(CustomNamespaceConfiguration config) {
+        MetricsProcessor metricsProcessor =
+                new CustomNamespaceMetricsProcessor(config.getMetricsConfig().getIncludeMetrics(),
+                        config.getDimensions(),
+                        config.getNamespace());
+
+        return new NamespaceMetricStatisticsCollector
+                .Builder(config.getAccounts(),
+                config.getConcurrencyConfig(),
+                config.getMetricsConfig(),
+                metricsProcessor, config.getMetricPrefix())
+                .withCredentialsDecryptionConfig(config.getCredentialsDecryptionConfig())
+                .withProxyConfig(config.getProxyConfig())
+                .build();
+    }
 }

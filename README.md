@@ -9,9 +9,9 @@ Captures Custom Namespace statistics from Amazon CloudWatch and displays them in
 
 ## Installation
 
-1. Run 'mvn clean install' from aws-customnamespace-monitoring-extension
-2. Copy and unzip AWSCustomNamespaceMonitor-\<version\>.zip from 'target' directory into \<machine_agent_dir\>/monitors/ directory. Do not place the extension in the `extensions` directory of your Machine Agent installation directory.
-3. Edit the config.yml file located at MachineAgent_Dir/monitors/AWSCustomNamespaceMonitor and provide the required configuration (see Configuration section)
+1. Run `mvn clean install` from aws-customnamespace-monitoring-extension
+2. Copy and unzip AWSCustomNamespaceMonitor-\<version\>.zip from 'target' directory into \<MachineAgent_Home\>/monitors/ directory. Do not place the extension in the `extensions` directory of your Machine Agent installation directory.
+3. Edit the config.yml file located at MachineAgent_Home/monitors/AWSCustomNamespaceMonitor and provide the required configuration (see Configuration section)
 4. The metricPrefix of the extension has to be configured as specified [here](https://community.appdynamics.com/t5/Knowledge-Base/How-do-I-troubleshoot-missing-custom-metrics-or-extensions/ta-p/28695#Configuring%20an%20Extension). Please make sure that the right metricPrefix is chosen based on your machine agent deployment, otherwise this could lead to metrics not being visible in the controller.
 5. Restart the Machine Agent.
 
@@ -56,7 +56,7 @@ In order to use the extension, you need to update the config.yml file that is pr
         username:
         password:
     ```
-6. To report metrics from specific dimension values, configure the `dimesion` section. The dimensions varies with AWS Namespace. Please refer to AWS [doc](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_concepts.html#Dimension) for details on dimensions.
+6. To report metrics from specific dimension values, configure the `dimesions` section. The dimensions varies with AWS Namespace. Please refer to AWS [doc](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_concepts.html#Dimension) for details on dimensions.
    Example below:
    ```
    dimensions:
@@ -136,7 +136,7 @@ If you get a valid output, that means your formatting is correct and you may mov
 Typical metric path: **Application Infrastructure Performance|\<Tier\>|Custom Metrics|Amazon Custom Namespace|\<NameSpace\>|\<Account Name\>|Region|Dimension Name|Dimension Value|** followed by the AWS Namespace configured metrics 
 
 ## Credentials Encryption
-Please visit [this page](https://community.appdynamics.com/t5/Knowledge-Base/How-to-use-Password-Encryption-with-Extensions/ta-p/29397) to get detailed instructions on accountAccessKey encryption. The steps in this document will guide you through the whole process.
+Please visit [this page](https://community.appdynamics.com/t5/Knowledge-Base/How-to-use-Password-Encryption-with-Extensions/ta-p/29397) to get detailed instructions on encryption. The steps in this document will guide you through the whole process.
 
 ## Extensions Workbench
 Workbench is an inbuilt feature provided with each extension in order to assist you to fine tune the extension setup before you actually deploy it on the controller. Please review the following document on [How to use the Extensions WorkBench](https://community.appdynamics.com/t5/Knowledge-Base/How-to-use-the-Extensions-WorkBench/ta-p/30130)
@@ -171,6 +171,6 @@ Find out more in the [AppSphere](https://www.appdynamics.com/community/exchange/
    |          Name            |  Version   |
    |--------------------------|------------|
    |Extension Version         |2.0         |
-   |Last Update               |22nd March, 2019 |
+   |Last Update               |25th March, 2019 |
 
 List of changes to this extension can be found [here](https://github.com/Appdynamics/aws-customnamespace-monitoring-extension/blob/master/CHANGELOG.md)

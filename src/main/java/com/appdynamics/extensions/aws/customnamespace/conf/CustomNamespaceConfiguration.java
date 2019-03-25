@@ -8,10 +8,7 @@
 
 package com.appdynamics.extensions.aws.customnamespace.conf;
 
-import com.appdynamics.extensions.aws.config.*;
-
-import java.util.List;
-import java.util.Map;
+import com.appdynamics.extensions.aws.config.Configuration;
 
 /**
  * @author Florencio Sarmiento
