@@ -3,16 +3,20 @@
 ## Use Case
 Captures Custom Namespace statistics from Amazon CloudWatch and displays them in the AppDynamics Metric Browser.
 
-**Note : By default, the Machine agent can only send a fixed number of metrics to the controller. This extension potentially reports thousands of metrics, so to change this limit, please follow the instructions mentioned [here](https://docs.appdynamics.com/display/PRO40/Metrics+Limits).**
+## Prerequisites
+1. Before the extension is installed, the prerequisites mentioned [here](https://community.appdynamics.com/t5/Knowledge-Base/Extensions-Prerequisites-Guide/ta-p/35213) need to be met. Please do not proceed with the extension installation if the specified prerequisites are not met.
+2. Please give the following permissions to the account being used to with the extension. **cloudwatch:ListMetrics cloudwatch:GetMetricStatistics**
 
 ## Installation
 
 1. Run 'mvn clean install' from aws-customnamespace-monitoring-extension
-2. Copy and unzip AWSCustomNamespaceMonitor-\<version\>.zip from 'target' directory into \<machine_agent_dir\>/monitors/
-3. Edit config.yaml file in AWSCustomNamespaceMonitor/conf and provide the required configuration (see Configuration section)
-4. Restart the Machine Agent.
+2. Copy and unzip AWSCustomNamespaceMonitor-\<version\>.zip from 'target' directory into \<machine_agent_dir\>/monitors/ directory. Do not place the extension in the `extensions` directory of your Machine Agent installation directory.
+3. Edit the config.yml file located at MachineAgent_Dir/monitors/AWSCustomNamespaceMonitor and provide the required configuration (see Configuration section)
+4. The metricPrefix of the extension has to be configured as specified [here](https://community.appdynamics.com/t5/Knowledge-Base/How-do-I-troubleshoot-missing-custom-metrics-or-extensions/ta-p/28695#Configuring%20an%20Extension). Please make sure that the right metricPrefix is chosen based on your machine agent deployment, otherwise this could lead to metrics not being visible in the controller.
+5. Restart the Machine Agent.
 
 ## Configuration
+In order to use the extension, you need to update the config.yml file that is present in the extension folder. The following is an explanation of the configurable fields that are present in the config.yml file.
 
 ### config.yaml
 
