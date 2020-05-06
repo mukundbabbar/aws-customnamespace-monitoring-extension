@@ -3,8 +3,8 @@ awsAccounts:
     awsSecretKey: "${EXT_AWS_SECRET_KEY}"
     displayAccountName: "AppD"
     regions: ["eu-central-1"]
-    namespace: "AWS/ElasticBeanstalk"
-    includeMetrics: [".*"]
+    namespace: "AWS/EC2"
+    accountMetrics: [".*"]
 
 credentialsDecryptionConfig:
     enableDecryption: "false"
@@ -17,12 +17,9 @@ proxyConfig:
     password:
 
 dimensions:
-  - name: "LoadBalancerName"
-    displayName: "Load Balancer Name"
-    values: []
-  - name: "AvailabilityZone"
-    displayName: "Availability Zone"
-    values: []
+  - name: "AutoScalingGroupName"
+    displayName: "AutoScaling Group"
+    values: [".*"]
 
 # Global metrics config for all accounts
 metricsConfig:
@@ -34,23 +31,23 @@ metricsConfig:
     #
     # Note: Irrespective of the metric type, value will still be reported as
     # Observed value to the Controller
-   includeMetrics:
-     - name: "BackendConnectionErrors"
-       alias: "Backend Connection Errors"
-       statType: "sum"
-       aggregationType: "AVERAGE"
-       timeRollUpType: "AVERAGE"
-       clusterRollUpType: "INDIVIDUAL"
-       delta: false
-       multiplier: 1
-     - name: "HealthyHostCount"
-       alias: "Healthy Host Count"
-       statType: "ave"
-       aggregationType: "AVERAGE"
-       timeRollUpType: "AVERAGE"
-       clusterRollUpType: "INDIVIDUAL"
-       delta: false
-       multiplier: 1
+#   includeMetrics:
+#     - name: "BackendConnectionErrors"
+#       alias: "Backend Connection Errors"
+#       statType: "sum"
+#       aggregationType: "AVERAGE"
+#       timeRollUpType: "AVERAGE"
+#       clusterRollUpType: "INDIVIDUAL"
+#       delta: false
+#       multiplier: 1
+#     - name: "HealthyHostCount"
+#       alias: "Healthy Host Count"
+#       statType: "ave"
+#       aggregationType: "AVERAGE"
+#       timeRollUpType: "AVERAGE"
+#       clusterRollUpType: "INDIVIDUAL"
+#       delta: false
+#       multiplier: 1
 
    metricsTimeRange:
      startTimeInMinsBeforeNow: 5
@@ -93,6 +90,8 @@ controllerInfo:
     applicationName: ""
     tierName: ""
     nodeName: ""
+#Encryption key for your controllerInfo password
+encryptionKey: ""
 
 regionEndPoints:
   ap-southeast-1: monitoring.ap-southeast-1.amazonaws.com
@@ -106,8 +105,8 @@ regionEndPoints:
   sa-east-1: monitoring.sa-east-1.amazonaws.com
 
 #prefix used to show up metrics in AppDynamics
-#metricPrefix: "Custom Metrics|AWS Custom Namespace|"
+metricPrefix: "Custom Metrics|AWS Custom Namespace|"
 
 #This will create it in specific Tier/Component. Make sure to replace <COMPONENT_ID> with the appropriate one from your environment.
 #To find the <COMPONENT_ID> in your environment, please follow the screenshot https://docs.appdynamics.com/display/PRO42/Build+a+Monitoring+Extension+Using+Java
-metricPrefix: "Server|Component:<COMPONENT_ID>|Custom Metrics|AWS Custom Namespace|"
+#metricPrefix: "Server|Component:<COMPONENT_ID>|Custom Metrics|AWS Custom Namespace|"

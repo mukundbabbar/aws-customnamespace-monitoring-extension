@@ -3,35 +3,114 @@ awsAccounts:
     awsSecretKey: ""
     displayAccountName: "TestAccount"
     regions: ["us-east-1", "us-west-1", "us-west-2"]
-    namespaces: ["AWS/EC2", "AWS/AutoScaling"]
+    namespaces: "AWS/EC2"
+    accountMetrics: [".*"]
 
 credentialsDecryptionConfig:
     enableDecryption: "true"
     decryptionKey: "test"
     
 proxyConfig:
-    host:
-    port:
+    host: 54.72.204.154
+    port: 8081
     username:
     password:
-    
-metricsConfig:
-    metricTypes:
-      - metricName: ""
-        statType: ""
 
-    excludeMetrics: [ ]
+dimensions:
+  - name: "LoadBalancerName"
+    displayName: "Load Balancer Name"
+    values: []
+  - name: "AvailabilityZone"
+    displayName: "Availability Zone"
+    values: []
+
+# Global metrics config for all accounts
+metricsConfig:
+
+    # By default, all metrics retrieved from cloudwatch are 'Average' values.
+    # This option allows you to override the metric type.
+    #
+    # Allowed statTypes are: ave, max, min, sum, samplecount
+    #
+    # Note: Irrespective of the metric type, value will still be reported as
+    # Observed value to the Controller
+   includeMetrics:
+     - name: "BackendConnectionErrors"
+       alias: "Backend Connection Errors"
+       statType: "sum"
+       aggregationType: "AVERAGE"
+       timeRollUpType: "AVERAGE"
+       clusterRollUpType: "INDIVIDUAL"
+       delta: false
+       multiplier: 1
+     - name: "HealthyHostCount"
+       alias: "Healthy Host Count"
+       statType: "ave"
+       aggregationType: "AVERAGE"
+       timeRollUpType: "AVERAGE"
+       clusterRollUpType: "INDIVIDUAL"
+       delta: false
+       multiplier: 1
 
     metricsTimeRange:
       startTimeInMinsBeforeNow: 5
       endTimeInMinsBeforeNow: 0
 
-    maxErrorRetrySize: 0
+   # Rate limit ( per second ) for GetMetricStatistics, default value is 400. https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_limits.html
+   getMetricStatisticsRateLimit: 400
+
+    #
+    # The max number of retry attempts for failed retryable requests
+    # (ex: 5xx error responses from a service) or throttling errors
+    #
+   maxErrorRetrySize: 0
+
+#Allowed values are Basic and Detailed. Refer https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-cloudwatch-new.html for more information
+# Basic will fire CloudWatch API calls every 5 minutes
+# Detailed will fire CloudWatch API calls every 1 minutes
+cloudWatchMonitoring: "Basic"
 
 concurrencyConfig:
-  noOfNamespaceThreads: 3
   noOfAccountThreads: 3
   noOfRegionThreadsPerAccount: 3
   noOfMetricThreadsPerRegion: 3
+  threadTimeOut: 30
 
+regionEndPoints:
+  ap-southeast-1: monitoring.ap-southeast-1.amazonaws.com
+  ap-southeast-2: monitoring.ap-southeast-2.amazonaws.com
+  ap-northeast-1: monitoring.ap-northeast-1.amazonaws.com
+  eu-central-1: monitoring.eu-central-1.amazonaws.com
+  eu-west-1: monitoring.eu-west-1.amazonaws.com
+  us-east-1: monitoring.us-east-1.amazonaws.com
+  us-west-1: monitoring.us-west-1.amazonaws.com
+  us-west-2: monitoring.us-west-2.amazonaws.com
+  sa-east-1: monitoring.sa-east-1.amazonaws.com
+
+#prefix used to show up metrics in AppDynamics
 metricPrefix: "Custom Metrics|AWS Custom Namespace|"
+
+#This will create it in specific Tier/Component. Make sure to replace <COMPONENT_ID> with the appropriate one from your environment.
+#To find the <COMPONENT_ID> in your environment, please follow the screenshot https://docs.appdynamics.com/display/PRO42/Build+a+Monitoring+Extension+Using+Java
+#metricPrefix: "Server|Component:<COMPONENT_ID>|Custom Metrics|AWS Custom Namespace|"
+
+controllerInfo:
+  controllerHost: ""
+  controllerPort: 8080
+  account: "customer1"
+  username: "user1"
+  password: "welcome"
+  encryptedPassword: ""
+  encryptionKey: ""
+  controllerSslEnabled: false
+  enableOrchestration: false
+  uniqueHostId: ""
+  accountAccessKey: ""
+  machinePath: ""
+  simEnabled: true
+  applicationName: ""
+  tierName: ""
+  nodeName: ""
+
+#Encryption key for your controllerInfo password
+encryptionKey: ""

@@ -4,7 +4,7 @@ awsAccounts:
     displayAccountName: ""
     regions: ["eu-central-1"]
     namespace: "AWS/ElasticBeanstalk"
-    includeMetrics: [".*"]
+    accountMetrics: [".*"]
 
 credentialsDecryptionConfig:
     enableDecryption: "false"
@@ -29,28 +29,28 @@ metricsConfig:
 
     # By default, all metrics retrieved from cloudwatch are 'Average' values.
     # This option allows you to override the metric type.
-    #
-    # Allowed statTypes are: ave, max, min, sum, samplecount
-    #
-    # Note: Irrespective of the metric type, value will still be reported as
+    # Allowed statTypes are: ave, max, min, sum, samplecount. Irrespective of the metric type, value will still be reported as
     # Observed value to the Controller
-   includeMetrics:
-     - name: "BackendConnectionErrors"
-       alias: "Backend Connection Errors"
-       statType: "sum"
-       aggregationType: "AVERAGE"
-       timeRollUpType: "AVERAGE"
-       clusterRollUpType: "INDIVIDUAL"
-       delta: false
-       multiplier: 1
-     - name: "HealthyHostCount"
-       alias: "Healthy Host Count"
-       statType: "ave"
-       aggregationType: "AVERAGE"
-       timeRollUpType: "AVERAGE"
-       clusterRollUpType: "INDIVIDUAL"
-       delta: false
-       multiplier: 1
+    # NOTE: includeMetrics will act as global metrics for all the account namespace. It will override the accountMetrics.
+    # Use includeMetrics when you want non-default properties and only one account and namespace is configured.
+
+#   includeMetrics:
+#     - name: "BackendConnectionErrors"
+#       alias: "Backend Connection Errors"
+#       statType: "sum"
+#       aggregationType: "AVERAGE"
+#       timeRollUpType: "AVERAGE"
+#       clusterRollUpType: "INDIVIDUAL"
+#       delta: false
+#       multiplier: 1
+#     - name: "HealthyHostCount"
+#       alias: "Healthy Host Count"
+#       statType: "ave"
+#       aggregationType: "AVERAGE"
+#       timeRollUpType: "AVERAGE"
+#       clusterRollUpType: "INDIVIDUAL"
+#       delta: false
+#       multiplier: 1
 
    metricsTimeRange:
      startTimeInMinsBeforeNow: 5
@@ -93,3 +93,24 @@ regionEndPoints:
 #This will create it in specific Tier/Component. Make sure to replace <COMPONENT_ID> with the appropriate one from your environment.
 #To find the <COMPONENT_ID> in your environment, please follow the screenshot https://docs.appdynamics.com/display/PRO42/Build+a+Monitoring+Extension+Using+Java
 metricPrefix: "Server|Component:<COMPONENT_ID>|Custom Metrics|AWS Custom Namespace|"
+
+controllerInfo:
+  controllerHost: ""
+  controllerPort: 8080
+  account: "customer1"
+  username: "user1"
+  password: "welcome"
+  encryptedPassword: ""
+  encryptionKey: ""
+  controllerSslEnabled: false
+  enableOrchestration: false
+  uniqueHostId: ""
+  accountAccessKey: ""
+  machinePath: ""
+  simEnabled: true
+  applicationName: ""
+  tierName: ""
+  nodeName: ""
+
+#Encryption key for your controllerInfo password
+encryptionKey: ""

@@ -14,8 +14,9 @@ import com.appdynamics.extensions.aws.collectors.NamespaceMetricStatisticsCollec
 import com.appdynamics.extensions.aws.customnamespace.conf.AWSAccount;
 import com.appdynamics.extensions.aws.customnamespace.conf.CustomNamespaceConfiguration;
 import com.appdynamics.extensions.aws.metric.processors.MetricsProcessor;
+import com.appdynamics.extensions.logging.ExtensionsLoggerFactory;
 import com.google.common.collect.Lists;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,7 +27,7 @@ import java.util.Map;
  */
 public class CustomNamespaceMonitor extends MultipleNamespaceCloudwatchMonitor<CustomNamespaceConfiguration> {
 
-	private static final Logger LOGGER = Logger.getLogger("com.singularity.extensions.aws.CustomNamespaceMonitor");
+	private static final Logger LOGGER = ExtensionsLoggerFactory.getLogger("CustomNamespaceMonitor");
 
 	private static final String DEFAULT_METRIC_PREFIX = String.format("%s%s%s%s",
 			"Custom Metrics", METRIC_PATH_SEPARATOR, "AWS Custom Namespace", METRIC_PATH_SEPARATOR);
@@ -59,9 +60,7 @@ public class CustomNamespaceMonitor extends MultipleNamespaceCloudwatchMonitor<C
 
 		for (AWSAccount account : config.getAwsAccounts()) {
 			String namespace = account.getNamespace();
-				MetricsProcessor metricsProcessor = new CustomNamespaceMetricsProcessor(config.getMetricsConfig().getIncludeMetrics(),
-						config.getDimensions(),
-						namespace);
+				MetricsProcessor metricsProcessor = new CustomNamespaceMetricsProcessor(config, namespace);
 
 				NamespaceMetricStatisticsCollector collector = new NamespaceMetricStatisticsCollector
 						.Builder(Arrays.asList(account),
@@ -93,10 +92,6 @@ public class CustomNamespaceMonitor extends MultipleNamespaceCloudwatchMonitor<C
     }
 
 //    public static void main(String[] args) throws TaskExecutionException {
-//        ConsoleAppender ca = new ConsoleAppender();
-//        ca.setWriter(new OutputStreamWriter(System.out));
-//        ca.setLayout(new PatternLayout("%-5p [%t]: %m%n"));
-//        ca.setThreshold(Level.DEBUG);
 //
 //        CustomNamespaceMonitor monitor = new CustomNamespaceMonitor();
 //
@@ -104,9 +99,7 @@ public class CustomNamespaceMonitor extends MultipleNamespaceCloudwatchMonitor<C
 //
 //        taskArgs.put("config-file", "src/main/resources/conf/config.yml");
 //        taskArgs.put("metric-file", "src/main/resources/conf/metrics.xml");
-//
-//        monitor.execute(taskArgs, null);
-//
+//		monitor.execute(taskArgs, null);
 //    }
 
 }

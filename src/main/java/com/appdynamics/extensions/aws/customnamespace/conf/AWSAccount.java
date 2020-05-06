@@ -19,22 +19,21 @@ import java.util.Set;
 public class AWSAccount extends Account {
 	private String namespace;
 
-    private Set<String> includeMetrics;
+    private Set<String> accountMetrics;
 
 	public String getNamespace() {
 		return namespace;
 	}
 
 	public void setNamespace(String namespaces) {
-		this.namespace = namespace;
+		this.namespace = namespaces;
 	}
 
-
-	public Set<String> getIncludeMetrics() {
-		return includeMetrics;
+	public Set<String> getAccountMetrics() {
+		return accountMetrics;
 	}
 
-	public void setIncludeMetrics(Set<String> includeMetrics) {
-		this.includeMetrics = includeMetrics;
+	public void setAccountMetrics(Set<String> accountMetrics) {
+		this.accountMetrics = accountMetrics;
 	}
 }
