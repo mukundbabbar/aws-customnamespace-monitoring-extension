@@ -4,7 +4,10 @@ awsAccounts:
     displayAccountName: "AppD"
     regions: ["eu-central-1"]
     namespace: "AWS/EC2"
-    accountMetrics: [".*"]
+    accountMetrics: ["CPUUtilization", "Disk.*", "Network.*"]
+#    If namespaceDimensions are empty or .*, then it will fetch metrics for all dimensions for the namespace. If the dimension name is given,
+#    then it will match and find the dimension values from the dimensions listed below. If it matches then query on dimension else fetch all.
+    namespaceDimensions: [""]  # Empty will fetch for all dimensions
 
 credentialsDecryptionConfig:
     enableDecryption: "false"
@@ -16,10 +19,15 @@ proxyConfig:
     username:
     password:
 
-dimensions:
-  - name: "AutoScalingGroupName"
-    displayName: "AutoScaling Group"
-    values: [".*"]
+# Filters based on dimensions, values accepts comma separated values and regex patterns. If `.*` is used, all are
+# monitored and if empty, none are monitored.
+#dimensions:
+#  - name: "LoadBalancerName"
+#    displayName: "Load Balancer Name"
+#    values: []
+#  - name: "AvailabilityZone"
+#    displayName: "Availability Zone"
+#    values: []
 
 # Global metrics config for all accounts
 metricsConfig:

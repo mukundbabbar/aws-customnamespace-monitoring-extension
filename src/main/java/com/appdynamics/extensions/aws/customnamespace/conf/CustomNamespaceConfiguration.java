@@ -19,8 +19,6 @@ import java.util.List;
 public class CustomNamespaceConfiguration extends Configuration {
 	private List<AWSAccount> awsAccounts;
 
-	private String encryptionKey;
-
 	public List<AWSAccount> getAwsAccounts() {
 		return awsAccounts;
 	}
@@ -29,11 +27,4 @@ public class CustomNamespaceConfiguration extends Configuration {
 		this.awsAccounts = awsAccounts;
 	}
 
-	public String getEncryptionKey() {
-		return encryptionKey;
-	}
-
-	public void setEncryptionKey(String encryptionKey) {
-		this.encryptionKey = encryptionKey;
-	}
 }

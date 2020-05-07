@@ -59,8 +59,7 @@ public class CustomNamespaceMonitor extends MultipleNamespaceCloudwatchMonitor<C
 		List<NamespaceMetricStatisticsCollector> collectors = Lists.newArrayList();
 
 		for (AWSAccount account : config.getAwsAccounts()) {
-			String namespace = account.getNamespace();
-				MetricsProcessor metricsProcessor = new CustomNamespaceMetricsProcessor(config, namespace);
+				MetricsProcessor metricsProcessor = new CustomNamespaceMetricsProcessor(config, account);
 
 				NamespaceMetricStatisticsCollector collector = new NamespaceMetricStatisticsCollector
 						.Builder(Arrays.asList(account),

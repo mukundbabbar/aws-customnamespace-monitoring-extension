@@ -54,6 +54,7 @@ public class CustomNamespaceMetricsProcessorTest {
     private LongAdder counter = new LongAdder();
     private List<Metric> listMetrics = Lists.newArrayList();
     private List<DimensionFilter> dimensionFilters = Lists.newArrayList();
+    private AWSAccount awsAccount;
 
     @Before
     public void setUp(){
@@ -65,8 +66,9 @@ public class CustomNamespaceMetricsProcessorTest {
         dimension.setDisplayName("Autoscaling Group Name");
         dimension.setValues(Sets.newHashSet(Arrays.asList(".*")));
         dimensions.add(dimension);
-        AWSAccount awsAccount = new AWSAccount();
+        awsAccount = new AWSAccount();
         awsAccount.setDisplayAccountName("test.account");
+        awsAccount.setNamespace("AWS/EC2");
         awsAccount.setAccountMetrics(Sets.newHashSet(Arrays.asList(".*")));
         when(config.getMetricsConfig()).thenReturn(metricsConfig);
         when(config.getDimensions()).thenReturn(dimensions);
@@ -96,7 +98,7 @@ public class CustomNamespaceMetricsProcessorTest {
         setUpProcessor();
         PowerMockito.mockStatic(MetricsProcessorHelper.class);
         when(MetricsProcessorHelper.getMetrics(awsCloudWatch, counter, "AWS/EC2", dimensionFilters)).thenReturn(listMetrics);
-        CustomNamespaceMetricsProcessor processor = new CustomNamespaceMetricsProcessor(config, "AWS/EC2");
+        CustomNamespaceMetricsProcessor processor = new CustomNamespaceMetricsProcessor(config, awsAccount);
         List<AWSMetric> returnedMetrics = processor.getMetrics(awsCloudWatch, "test.account", counter);
         Assert.assertNotNull(returnedMetrics);
     }
@@ -110,7 +112,7 @@ public class CustomNamespaceMetricsProcessorTest {
         awsMetric.setIncludeMetric(includeMetric);
         PowerMockito.mockStatic(MetricsProcessorHelper.class);
         when(MetricsProcessorHelper.getStatisticType(awsMetric.getIncludeMetric(), Arrays.asList())).thenReturn(StatisticType.AVE);
-        CustomNamespaceMetricsProcessor processor = new CustomNamespaceMetricsProcessor(config, "AWS/EC2");
+        CustomNamespaceMetricsProcessor processor = new CustomNamespaceMetricsProcessor(config, awsAccount);
         StatisticType statisticType = processor.getStatisticType(awsMetric);
         Assert.assertEquals(statisticType.getTypeName(), "Average");
 
@@ -118,7 +120,7 @@ public class CustomNamespaceMetricsProcessorTest {
 
     @Test
     public void getNamespace() {
-        CustomNamespaceMetricsProcessor processor = new CustomNamespaceMetricsProcessor(config, "AWS/EC2");
+        CustomNamespaceMetricsProcessor processor = new CustomNamespaceMetricsProcessor(config, awsAccount);
         String result = processor.getNamespace();
         Assert.assertEquals(result, "AWS/EC2");
     }

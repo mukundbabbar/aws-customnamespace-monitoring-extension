@@ -21,6 +21,8 @@ public class AWSAccount extends Account {
 
     private Set<String> accountMetrics;
 
+    private Set<String> namespaceDimensions;
+
 	public String getNamespace() {
 		return namespace;
 	}
@@ -35,5 +37,13 @@ public class AWSAccount extends Account {
 
 	public void setAccountMetrics(Set<String> accountMetrics) {
 		this.accountMetrics = accountMetrics;
+	}
+
+	public Set<String> getNamespaceDimensions() {
+		return namespaceDimensions;
+	}
+
+	public void setNamespaceDimensions(Set<String> namespaceDimensions) {
+		this.namespaceDimensions = namespaceDimensions;
 	}
 }

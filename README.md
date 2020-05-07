@@ -30,35 +30,50 @@ In order to use the extension, you need to update the config.yml file that is pr
    `metricPrefix: "Server|Component:100|Custom Metrics|Amazon Custom Namespace|"`
    
 2. Provide accessKey(required) and secretKey(required) of AWS account(s), also provide displayAccountName(any name that represents your account) and regions(required). If you are running this extension inside an EC2 instance which has IAM profile configured then awsAccessKey and awsSecretKey can be kept empty, extension will use IAM profile to authenticate.   It supports one namespace per account and if you want to monitor multiple namespaces, then list the namespace under a separate account in the awsAccounts.
-  ``` 
-   awsAccounts:
-     - awsAccessKey: ""
-       awsSecretKey: ""
-       displayAccountName: ""
-       regions: ["eu-central-1"]
-       namespace: "AWS/EC2"
-       accountMetrics: [".*"]
-   
-     - awsAccessKey: "XXXXXXXX2"
-       awsSecretKey: "XXXXXXXXXX2"
-       displayAccountName: "TestAccount_2"
-       regions: ["eu-central-1"]
-       namespace: "AWS/ElasticBeanstalk"
-       accountMetrics: [".*"]
-   ```
-   **NOTE:** accountMetrics accepts multiple metric names for the namespace or service which is being monitored for the account. They also support regexes.
-   For AWS/EC2 namespace a sample accountMetrics configuration can be as below.
-  ```
-        accountMetrics: ["CPUUtilization", "Disk.*", "Network.*"]
-  ```
-   
+      ``` 
+       awsAccounts:
+         - awsAccessKey: ""
+           awsSecretKey: ""
+           displayAccountName: ""
+           regions: ["eu-central-1"]
+           namespace: "AWS/EC2"
+           accountMetrics: [".*"] # E.g. ["CPUUtilization", "Disk.*", "Network.*"]
+           namespaceDimensions: [] # Empty if fetch for all dimensions
+       
+         - awsAccessKey: "XXXXXXXX2"
+           awsSecretKey: "XXXXXXXXXX2"
+           displayAccountName: "TestAccount_2"
+           regions: ["eu-central-1"]
+           namespace: "AWS/Lambda"
+           accountMetrics: [".*"] # ".*"  will fetch all the metrics
+           namespaceDimensions: ["Resource"] # Accepts a list of dimension names.
+    ```
+**NOTE:** 
+**accountMetrics** accepts multiple metric names for the namespace or service which is being monitored for the account. They also support regexes.
+For AWS/EC2 namespace a sample accountMetrics configuration can be as below (use .* to match the suffix).
+```
+            namespace: "AWS/EC2"
+            accountMetrics: ["CPUUtilization", "Disk.*", "Network.*"]
+ ```
+This will fetch all the matching metrics for EC2 as below [refer](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/viewing_metrics_with_cloudwatch.html).
+    
+ ```
+            NetworkPacketsIn, DiskReadBytes, DiskReadOps, CPUUtilization, NetworkPacketsOut, NetworkOut,
+            DiskWriteOps, NetworkOut, NetworkIn, DiskWriteBytes, CPUUtilization, NetworkIn
+```
+**nameSpaceDimensions** accepts a list of dimension names [refer](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/viewing_metrics_with_cloudwatch.html#ec2-cloudwatch-dimensions). The following configuration fetches metrics for the dimension-matched EC2 instances.
+```
+            namespace: "AWS/EC2"
+            namespaceDimensions:["AutoScalingGroupName", "ImageId"]
+```
+For more configuration options on metrics and dimensions, please refer `Advanced Configurations` in this doc.
 3. If you want to encrypt the "awsAccessKey" and "awsSecretKey" then follow the "Credentials Encryption" section and provide the encrypted values in "awsAccessKey" and "awsSecretKey". Configure "enableDecryption" of "credentialsDecryptionConfig" to true and provide the encryption key in "encryptionKey" For example,
-  ``` 
-   #Encryption key for Encrypted password.
-   credentialsDecryptionConfig:
-       enableDecryption: "true"
-       encryptionKey: "XXXXXXXX"
-   ```
+      ``` 
+       #Encryption key for Encrypted password.
+       credentialsDecryptionConfig:
+           enableDecryption: "true"
+           encryptionKey: "XXXXXXXX"
+       ```
 4. Configure proxy details if there is a proxy between MachineAgent and AWS.
    ``` 
     proxyConfig:
@@ -67,54 +82,8 @@ In order to use the extension, you need to update the config.yml file that is pr
         username:
         password:
     ```
-5. To report metrics from specific dimension values, configure the `dimesions` section. The dimensions varies with AWS Namespace. Please refer to AWS [doc](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_concepts.html#Dimension) for details on dimensions.
-   Example below:
-   ```
-   dimensions:
-     - name: "TableName"
-       displayName: "Table Name"
-       values: ["ABC", "DEF"]
-     - name: "AvailabilityZone"
-       displayName: "Availability Zone"
-       values: []
-    ```
-   name is the dimension name and values are comma separated values of the dimension. displayName is the name with which it appears on the AppDynamics Metric Browser.
-   If these fields are left empty, none of your instances will be monitored. In order to monitor everything under a dimension, you can simply use ".*" to pull everything from your AWS Environment.
-   
-6. Configure the metrics section.
-   For configuring the metrics, the following properties can be used:
-```   
-        |     Property      |   Default value |         Possible values         |                                              Description                                                                                                |
-        | :---------------- | :-------------- | :------------------------------ | :------------------------------------------------------------------------------------------------------------- |
-        | alias             | metric name     | Any string                      | The substitute name to be used in the metric browser instead of metric name.                                   |
-        | statType          | "ave"           | "AVERAGE", "SUM", "MIN", "MAX"  | AWS configured values as returned by API                                                                       |
-        | aggregationType   | "AVERAGE"       | "AVERAGE", "SUM", "OBSERVATION" | [Aggregation qualifier](https://docs.appdynamics.com/display/PRO44/Build+a+Monitoring+Extension+Using+Java)    |
-        | timeRollUpType    | "AVERAGE"       | "AVERAGE", "SUM", "CURRENT"     | [Time roll-up qualifier](https://docs.appdynamics.com/display/PRO44/Build+a+Monitoring+Extension+Using+Java)   |
-        | clusterRollUpType | "INDIVIDUAL"    | "INDIVIDUAL", "COLLECTIVE"      | [Cluster roll-up qualifier](https://docs.appdynamics.com/display/PRO44/Build+a+Monitoring+Extension+Using+Java)|
-        | multiplier        | 1               | Any number                      | Value with which the metric needs to be multiplied.                                                            |
-        | convert           | null            | Any key value map               | Set of key value pairs that indicates the value to which the metrics need to be transformed. eg: UP:0, DOWN:1  |
-        | delta             | false           | true, false                     | If enabled, gives the delta values of metrics instead of actual values.                                        |
-   ```
- 
-**For example:**
 
- ```
-    includeMetrics:
-         - name: "BackendConnectionErrors"
-           alias: "Backend Connection Errors"
-           statType: "sum"
-           aggregationType: "AVERAGE"
-           timeRollUpType: "AVERAGE"
-           clusterRollUpType: "INDIVIDUAL"
-           delta: false
-           multiplier: 1
-```
- **All these metric properties(statType, aggregationType, timeRollUpType etc.) are optional, and the default value shown in the table is applied to the metric(if a property has not been specified) by default.**
- 
- **NOTE:** The IncludeMetrics will override `accountMetrics` configured under awsAccounts earlier. They are global metrics(with the configured stats) for all the accounts and their coorresponding namespace and fetches metrics with default properties. By default they have been commented and use the `accountMetrics` for configuring the metrics to be monitored. Use/Configure the `includeMetrics` only when you want to monitor a metrics with some specifiic properties.
-
-       
-7. For several services AWS CloudWatch does not instantly update the metrics but it goes back in time to update that information. 
+5. For several services AWS CloudWatch does not instantly update the metrics but it goes back in time to update that information. 
    This delay sometimes can take upto 5 minutes. The extension runs every minute(Detailed) or every 5 minutes (Basic) and gets the latest value at that time.
    There may be a case where the extension may miss the value before CloudWatch updates it. In order to make sure we don't do that, 
    the extension has the ability to look for metrics during a certain interval, where we already have set it to default at 5 minutes but you can 
@@ -125,15 +94,15 @@ In order to use the extension, you need to update the config.yml file that is pr
          endTimeInMinsBeforeNow: 5
        ```
   
-8. This field is set as per the defaults suggested by AWS. You can change this if your limit is different.
+6. This field is set as per the defaults suggested by AWS. You can change this if your limit is different.
        ```    
        getMetricStatisticsRateLimit: 400
        ```
-9. The maximum number of retry attempts for failed requests that can be retried. 
+7. The maximum number of retry attempts for failed requests that can be retried. 
         ```
         maxErrorRetrySize: 3
         ```
-10. CloudWatch can be used in two formats, Basic and Detailed. You can specify how you would like to run the extension by specifying the chosen format here.
+8. CloudWatch can be used in two formats, Basic and Detailed. You can specify how you would like to run the extension by specifying the chosen format here.
     By default, the extension is set to Basic, which makes the extension run every 5 minutes.
     Refer https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-cloudwatch-new.html for more information.
     
@@ -147,6 +116,76 @@ In order to use the extension, you need to update the config.yml file that is pr
 Please avoid using tab (\t) when editing yaml files. Please copy all the contents of the config.yml file and go to [Yaml Validator](http://www.yamllint.com/) . On reaching the website, paste the contents and press the “Go” button on the bottom left.                                                       
 If you get a valid output, that means your formatting is correct and you may move on to the next step.
 
+## Advanced Configurations
+1. Configure the iincludeMetrics section.
+   For configuring the metrics, the following properties can be used:
+    ```   
+            |     Property      |   Default value |         Possible values         |                                              Description                                                                                                |
+            | :---------------- | :-------------- | :------------------------------ | :------------------------------------------------------------------------------------------------------------- |
+            | alias             | metric name     | Any string                      | The substitute name to be used in the metric browser instead of metric name.                                   |
+            | statType          | "ave"           | "AVERAGE", "SUM", "MIN", "MAX"  | AWS configured values as returned by API                                                                       |
+            | aggregationType   | "AVERAGE"       | "AVERAGE", "SUM", "OBSERVATION" | [Aggregation qualifier](https://docs.appdynamics.com/display/PRO44/Build+a+Monitoring+Extension+Using+Java)    |
+            | timeRollUpType    | "AVERAGE"       | "AVERAGE", "SUM", "CURRENT"     | [Time roll-up qualifier](https://docs.appdynamics.com/display/PRO44/Build+a+Monitoring+Extension+Using+Java)   |
+            | clusterRollUpType | "INDIVIDUAL"    | "INDIVIDUAL", "COLLECTIVE"      | [Cluster roll-up qualifier](https://docs.appdynamics.com/display/PRO44/Build+a+Monitoring+Extension+Using+Java)|
+            | multiplier        | 1               | Any number                      | Value with which the metric needs to be multiplied.                                                            |
+            | convert           | null            | Any key value map               | Set of key value pairs that indicates the value to which the metrics need to be transformed. eg: UP:0, DOWN:1  |
+            | delta             | false           | true, false                     | If enabled, gives the delta values of metrics instead of actual values.                                        |
+       ```
+ 
+**For example:**
+
+ ```
+        includeMetrics:
+             - name: "BackendConnectionErrors"
+               alias: "Backend Connection Errors"
+               statType: "sum"
+               aggregationType: "AVERAGE"
+               timeRollUpType: "AVERAGE"
+               clusterRollUpType: "INDIVIDUAL"
+               delta: false
+               multiplier: 1
+```
+ **All these metric properties(statType, aggregationType, timeRollUpType etc.) are optional, and the default value shown in the table is applied to the metric(if a property has not been specified) by default.**
+ 
+ **NOTE:** We have `accountMetrics` for managing metrics configurations for each of the account separately. The IncludeMetrics will override `accountMetrics` configured under awsAccounts and it has higher priority. `includeMetrics` are global metrics(with the configured stats) for all the accounts and their coorresponding namespace. The includeMetrics should be used with only one accoount with namespace.
+ **By default they have been commented** and use the `accountMetrics` for configuring the metrics for monitoring. Use/Configure the `includeMetrics` when you want to monitor metrics with specific properties i.e advanced configurations and for a single account only.
+ 
+2. To report metrics from specific dimension values, configure the `dimesions` section. The dimensions varies with AWS Namespace. Please refer to AWS [doc](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_concepts.html#Dimension) for details on dimensions.
+   Example below:
+```
+       dimensions:
+         - name: "TableName"
+           displayName: "Table Name"
+           values: ["table1", "table2"]
+         - name: "AvailabilityZone"
+           displayName: "Availability Zone"
+           values: [".*"]
+```
+   Here, **name** is the dimension name and **values** are comma separated values of the dimension. **displayName** is the name with which it appears on the AppDynamics Metric Browser.
+   If the values fields are left empty, none of your instances for the dimension will be monitored. In order to monitor everything under a dimension, you can simply use ".*" to pull everything from your AWS Environment.
+ **NOTE:** We have `namespaceDimensions` for dimension names for each of the account separately. On top oof it, dimensions have been added for more filtering as it accepts dimensions values also. 
+ The dimensions names configured in **namespaceDimensions" will be matched from the **dimensions* above and will fetch the metrics as per the configured values.
+ ```
+            awsAccounts:
+                ...
+                namespace: "AWS/EC2"
+                namespaceDimensions: ["AutoScalingGroupName", "InstanceId"]
+                
+            dimensions:
+             - name: "InstanceId"
+                displayName: "Instance Id"
+                values: ["i-00112.*`"]
+              - name: "AutoScalingGroupName"
+                displayName: "Auto Scaling GroupName"
+                values: ["TC_build"]
+              - name: "FunctionName"
+                displayName: "Lambda Function Name"
+                values: [".*`"]
+ ```
+ In the example above, the **namespaceDimensions** will be matched with **dimensions** and monitor the metrics for the filtered EC2 instances. We see that the AutoScalingGroupName and InstanceId are matched and their values will be used to further filtering of instances.
+ By default we have commented the dimensions. When dimensions are not configured, then the namespaceDimensions will be used and monitor all the instances for the dimensions mentioned.
+Leave namespaceDimensions empty, if you want to monitor all the instances, irrespective of dimensions.
+ 
 ## Metrics
 Typical metric path: **Application Infrastructure Performance|\<Tier\>|Custom Metrics|Amazon Custom Namespace|\<NameSpace\>|\<Account Name\>|Region|Dimension Name|Dimension Value|** followed by the AWS Namespace configured metrics 
 
