@@ -3,6 +3,8 @@
 ## Use Case
 Captures Custom Namespace statistics from Amazon CloudWatch and displays them in the AppDynamics Metric Browser.
 
+**Please do not use it for monitoring AWS services whose specific extension exists on [community exchange](https://www.appdynamics.com/community/exchange/).**  We have morre than 25 extensions to monitor different AWS services and specific extension provides more configurability and better monitoring.
+
 ## Prerequisites
 Please give the following permissions to the account being used to with the extension. 
 ```
@@ -33,15 +35,15 @@ In order to use the extension, you need to update the config.yml file that is pr
 2. Provide accessKey(required) and secretKey(required) of AWS account(s), also provide displayAccountName(any name that represents your account) and regions(required). If you are running this extension inside an EC2 instance which has IAM profile configured then awsAccessKey and awsSecretKey can be kept empty, extension will use IAM profile to authenticate.
   ``` 
    accounts:
-     - awsAccessKey: "XXXXXXXX1"
-       awsSecretKey: "XXXXXXXXXX1"
-       displayAccountName: "TestAccount_1"
-       regions: ["us-east-1","us-west-1","us-west-2"]
-   
-     - awsAccessKey: "XXXXXXXX2"
-       awsSecretKey: "XXXXXXXXXX2"
-       displayAccountName: "TestAccount_2"
-       regions: ["eu-central-1","eu-west-1"]
+         - awsAccessKey: "XXXXXXXX1"
+           awsSecretKey: "XXXXXXXXXX1"
+           displayAccountName: "TestAccount_1"
+           regions: ["us-east-1","us-west-1","us-west-2"]
+       
+         - awsAccessKey: "XXXXXXXX2"
+           awsSecretKey: "XXXXXXXXXX2"
+           displayAccountName: "TestAccount_2"
+           regions: ["eu-central-1","eu-west-1"]
    ```
    
 3. Please specify the AWS Namespace that you would like to monitor. Please note that only 1 AWS Namespace can be monitored using this extension. Inorder to monitor multiple Namespaces, please have multiple copies of this extension. However, multiple accounts can be configured under the `accounts` to monitor the namespace.
@@ -49,18 +51,18 @@ In order to use the extension, you need to update the config.yml file that is pr
 
 4. If you want to encrypt the "awsAccessKey" and "awsSecretKey" then follow the "Credentials Encryption" section and provide the encrypted values in "awsAccessKey" and "awsSecretKey". Configure "enableDecryption" of "credentialsDecryptionConfig" to true and provide the encryption key in "encryptionKey" For example,
   ``` 
-   #Encryption key for Encrypted password.
-   credentialsDecryptionConfig:
-       enableDecryption: "true"
-       encryptionKey: "XXXXXXXX"
+           #Encryption key for Encrypted password.
+           credentialsDecryptionConfig:
+               enableDecryption: "true"
+               encryptionKey: "XXXXXXXX"
    ```
 5. Configure proxy details if there is a proxy between MachineAgent and AWS.
    ``` 
-    proxyConfig:
-        host:
-        port:
-        username:
-        password:
+        proxyConfig:
+            host:
+            port:
+            username:
+            password:
     ```
 6. To report metrics from specific dimension values, configure the `dimesions` section. The dimensions varies with AWS Namespace. Please refer to AWS [doc](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_concepts.html#Dimension) for details on dimensions.
    Example below:

@@ -1,5 +1,5 @@
-namespace: "AWS/EC2"
-awsAccounts:
+nameSpace: "AWS/EC2"
+accounts:
   - awsAccessKey: "${EXT_AWS_ACCESS_KEY}"
     awsSecretKey: "${EXT_AWS_SECRET_KEY}"
     displayAccountName: "AppD"
