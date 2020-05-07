@@ -11,7 +11,7 @@ package com.appdynamics.extensions.aws.customnamespace;
 import static com.appdynamics.extensions.aws.Constants.METRIC_PATH_SEPARATOR;
 import com.appdynamics.extensions.aws.MultipleNamespaceCloudwatchMonitor;
 import com.appdynamics.extensions.aws.collectors.NamespaceMetricStatisticsCollector;
-import com.appdynamics.extensions.aws.customnamespace.conf.AWSAccount;
+import com.appdynamics.extensions.aws.config.Account;
 import com.appdynamics.extensions.aws.customnamespace.conf.CustomNamespaceConfiguration;
 import com.appdynamics.extensions.aws.metric.processors.MetricsProcessor;
 import com.appdynamics.extensions.logging.ExtensionsLoggerFactory;
@@ -58,8 +58,10 @@ public class CustomNamespaceMonitor extends MultipleNamespaceCloudwatchMonitor<C
 
 		List<NamespaceMetricStatisticsCollector> collectors = Lists.newArrayList();
 
-		for (AWSAccount account : config.getAwsAccounts()) {
-				MetricsProcessor metricsProcessor = new CustomNamespaceMetricsProcessor(config, account);
+		for (Account account : config.getAccounts()) {
+				MetricsProcessor metricsProcessor =  new CustomNamespaceMetricsProcessor(config.getMetricsConfig().getIncludeMetrics(),
+						config.getDimensions(),
+						config.getNameSpace());
 
 				NamespaceMetricStatisticsCollector collector = new NamespaceMetricStatisticsCollector
 						.Builder(Arrays.asList(account),

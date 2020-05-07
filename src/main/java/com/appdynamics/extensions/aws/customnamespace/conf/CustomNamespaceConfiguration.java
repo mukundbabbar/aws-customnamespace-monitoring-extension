@@ -10,21 +10,18 @@ package com.appdynamics.extensions.aws.customnamespace.conf;
 
 import com.appdynamics.extensions.aws.config.Configuration;
 
-import java.util.List;
-
 /**
  * @author Prashant Mehta
- *
  */
 public class CustomNamespaceConfiguration extends Configuration {
-	private List<AWSAccount> awsAccounts;
 
-	public List<AWSAccount> getAwsAccounts() {
-		return awsAccounts;
-	}
+    private String nameSpace;
 
-	public void setAwsAccounts(List<AWSAccount> awsAccounts) {
-		this.awsAccounts = awsAccounts;
-	}
+    public String getNameSpace() {
+        return nameSpace;
+    }
 
+    public void setNameSpace(String nameSpace) {
+        this.nameSpace = nameSpace;
+    }
 }

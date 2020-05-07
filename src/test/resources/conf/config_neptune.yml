@@ -1,23 +1,27 @@
-namespaces: "AWS/EC2"
-awsAccounts:
+nameSpace: "AWS/Neptune"
+
+accounts:
   - awsAccessKey: ""
     awsSecretKey: ""
-    displayAccountName: "TestAccount"
-    regions: ["us-east-1", "us-west-1", "us-west-2"]
+    displayAccountName: ""
+    regions: ["eu-central-1"]
+
 
 credentialsDecryptionConfig:
-    enableDecryption: "true"
-    decryptionKey: "test"
+    enableDecryption: "false"
+    encryptionKey:
 
 proxyConfig:
-    host: 54.72.204.154
-    port: 8081
+    host:
+    port:
     username:
     password:
 
+# Filters based on dimensions, values accepts comma separated values and regex patterns. If `.*` is used, all are
+# monitored and if empty, none are monitored.
 dimensions:
-  - name: "AutoScalingGroupName"
-    displayName: "Auto Scaling GroupName"
+  - name: "EngineName"
+    displayName: "Engine Name"
     values: [".*"]
 
 # Global metrics config for all accounts
@@ -25,22 +29,92 @@ metricsConfig:
 
     # By default, all metrics retrieved from cloudwatch are 'Average' values.
     # This option allows you to override the metric type.
-    #
-    # Allowed statTypes are: ave, max, min, sum, samplecount
-    #
-    # Note: Irrespective of the metric type, value will still be reported as
+    # Allowed statTypes are: ave, max, min, sum, samplecount. Irrespective of the metric type, value will still be reported as
     # Observed value to the Controller
+
    includeMetrics:
-     - name: "CPUUtilization"
-       alias: "CPUUtilization"
+     - name: "GremlinRequests"
+       alias: "GremlinRequests"
        statType: "sum"
        aggregationType: "AVERAGE"
        timeRollUpType: "AVERAGE"
        clusterRollUpType: "INDIVIDUAL"
        delta: false
        multiplier: 1
-     - name: "NetworkIn"
-       alias: "NetworkIn"
+     - name: "StatusRequests"
+       alias: "StatusRequests"
+       statType: "ave"
+       aggregationType: "AVERAGE"
+       timeRollUpType: "AVERAGE"
+       clusterRollUpType: "INDIVIDUAL"
+       delta: false
+       multiplier: 1
+     - name: "StatusErrors"
+       alias: "StatusErrors"
+       statType: "ave"
+       aggregationType: "AVERAGE"
+       timeRollUpType: "AVERAGE"
+       clusterRollUpType: "INDIVIDUAL"
+       delta: false
+       multiplier: 1
+     - name: "FreeLocalStorage"
+       alias: "FreeLocalStorage"
+       statType: "ave"
+       aggregationType: "AVERAGE"
+       timeRollUpType: "AVERAGE"
+       clusterRollUpType: "INDIVIDUAL"
+       delta: false
+       multiplier: 1
+     - name: "VolumeBytesLeftTotal"
+       alias: "VolumeBytesLeftTotal"
+       statType: "ave"
+       aggregationType: "AVERAGE"
+       timeRollUpType: "AVERAGE"
+       clusterRollUpType: "INDIVIDUAL"
+       delta: false
+       multiplier: 1
+     - name: "SparqlErrors"
+       alias: "SparqlErrors"
+       statType: "ave"
+       aggregationType: "AVERAGE"
+       timeRollUpType: "AVERAGE"
+       clusterRollUpType: "INDIVIDUAL"
+       delta: false
+       multiplier: 1
+     - name: "SparqlRequests"
+       alias: "SparqlRequests"
+       statType: "ave"
+       aggregationType: "AVERAGE"
+       timeRollUpType: "AVERAGE"
+       clusterRollUpType: "INDIVIDUAL"
+       delta: false
+       multiplier: 1
+     - name: "EngineUptime"
+       alias: "EngineUptime"
+       statType: "ave"
+       aggregationType: "AVERAGE"
+       timeRollUpType: "AVERAGE"
+       clusterRollUpType: "INDIVIDUAL"
+       delta: false
+       multiplier: 1
+     - name: "FreeableMemory"
+       alias: "FreeableMemory"
+       statType: "ave"
+       aggregationType: "AVERAGE"
+       timeRollUpType: "AVERAGE"
+       clusterRollUpType: "INDIVIDUAL"
+       delta: false
+       multiplier: 1
+     - name: "LoaderRequests"
+       alias: "LoaderRequests"
+       statType: "ave"
+       aggregationType: "AVERAGE"
+       timeRollUpType: "AVERAGE"
+       clusterRollUpType: "INDIVIDUAL"
+       delta: false
+       multiplier: 1
+     - name: "NumTxCommitted"
+       alias: "NumTxCommitted"
        statType: "ave"
        aggregationType: "AVERAGE"
        timeRollUpType: "AVERAGE"
@@ -48,9 +122,9 @@ metricsConfig:
        delta: false
        multiplier: 1
 
-    metricsTimeRange:
-      startTimeInMinsBeforeNow: 5
-      endTimeInMinsBeforeNow: 0
+   metricsTimeRange:
+     startTimeInMinsBeforeNow: 5
+     endTimeInMinsBeforeNow: 0
 
    # Rate limit ( per second ) for GetMetricStatistics, default value is 400. https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_limits.html
    getMetricStatisticsRateLimit: 400
@@ -94,11 +168,11 @@ regionEndPoints:
   us-gov-west-1 : monitoring.us-gov-west-1.amazonaws.com
 
 #prefix used to show up metrics in AppDynamics
-metricPrefix: "Custom Metrics|AWS Custom Namespace|"
+#metricPrefix: "Custom Metrics|AWS Custom Namespace|"
 
 #This will create it in specific Tier/Component. Make sure to replace <COMPONENT_ID> with the appropriate one from your environment.
 #To find the <COMPONENT_ID> in your environment, please follow the screenshot https://docs.appdynamics.com/display/PRO42/Build+a+Monitoring+Extension+Using+Java
-#metricPrefix: "Server|Component:<COMPONENT_ID>|Custom Metrics|AWS Custom Namespace|"
+metricPrefix: "Server|Component:<COMPONENT_ID>|Custom Metrics|AWS Custom Namespace|"
 
 controllerInfo:
   controllerHost: ""

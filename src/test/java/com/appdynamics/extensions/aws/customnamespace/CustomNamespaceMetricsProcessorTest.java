@@ -6,7 +6,6 @@ import com.amazonaws.services.cloudwatch.model.Metric;
 import com.appdynamics.extensions.aws.config.Dimension;
 import com.appdynamics.extensions.aws.config.IncludeMetric;
 import com.appdynamics.extensions.aws.config.MetricsConfig;
-import com.appdynamics.extensions.aws.customnamespace.conf.AWSAccount;
 import com.appdynamics.extensions.aws.customnamespace.conf.CustomNamespaceConfiguration;
 import com.appdynamics.extensions.aws.dto.AWSMetric;
 import com.appdynamics.extensions.aws.metric.StatisticType;
@@ -54,26 +53,27 @@ public class CustomNamespaceMetricsProcessorTest {
     private LongAdder counter = new LongAdder();
     private List<Metric> listMetrics = Lists.newArrayList();
     private List<DimensionFilter> dimensionFilters = Lists.newArrayList();
-    private AWSAccount awsAccount;
+    private List<Dimension> dimensions;
+//    private AWSAccount awsAccount;
 
     @Before
     public void setUp(){
         List<String> accountMetrics = Lists.newArrayList();
         accountMetrics.add(".*");
-        List<Dimension> dimensions = Lists.newArrayList();
+        dimensions = Lists.newArrayList();
         Dimension dimension = new Dimension();
         dimension.setName("AutoScalingGroupName");
         dimension.setDisplayName("Autoscaling Group Name");
         dimension.setValues(Sets.newHashSet(Arrays.asList(".*")));
         dimensions.add(dimension);
-        awsAccount = new AWSAccount();
-        awsAccount.setDisplayAccountName("test.account");
-        awsAccount.setNamespace("AWS/EC2");
-        awsAccount.setAccountMetrics(Sets.newHashSet(Arrays.asList(".*")));
+//        awsAccount = new AWSAccount();
+//        awsAccount.setDisplayAccountName("test.account");
+//        awsAccount.setNamespace("AWS/EC2");
+//        awsAccount.setAccountMetrics(Sets.newHashSet(Arrays.asList(".*")));
         when(config.getMetricsConfig()).thenReturn(metricsConfig);
         when(config.getDimensions()).thenReturn(dimensions);
         when(metricsConfig.getIncludeMetrics()).thenReturn(null);
-        when(config.getAwsAccounts()).thenReturn(Arrays.asList(awsAccount));
+//        when(config.getAwsAccounts()).thenReturn(Arrays.asList(awsAccount));
 
         for (Dimension dimension1 : dimensions) {
             DimensionFilter dimensionFilter = new DimensionFilter();
@@ -96,9 +96,12 @@ public class CustomNamespaceMetricsProcessorTest {
     @Test
     public void testGetMetricsReturnedAWSMetrics() throws Exception {
         setUpProcessor();
+        IncludeMetric includeMetric = new IncludeMetric();
+        includeMetric.setName("testMetric");
+        includeMetric.setStatType("ave");
         PowerMockito.mockStatic(MetricsProcessorHelper.class);
         when(MetricsProcessorHelper.getMetrics(awsCloudWatch, counter, "AWS/EC2", dimensionFilters)).thenReturn(listMetrics);
-        CustomNamespaceMetricsProcessor processor = new CustomNamespaceMetricsProcessor(config, awsAccount);
+        CustomNamespaceMetricsProcessor processor = new CustomNamespaceMetricsProcessor(Arrays.asList(includeMetric), dimensions, "AWS/EC2");
         List<AWSMetric> returnedMetrics = processor.getMetrics(awsCloudWatch, "test.account", counter);
         Assert.assertNotNull(returnedMetrics);
     }
@@ -112,7 +115,7 @@ public class CustomNamespaceMetricsProcessorTest {
         awsMetric.setIncludeMetric(includeMetric);
         PowerMockito.mockStatic(MetricsProcessorHelper.class);
         when(MetricsProcessorHelper.getStatisticType(awsMetric.getIncludeMetric(), Arrays.asList())).thenReturn(StatisticType.AVE);
-        CustomNamespaceMetricsProcessor processor = new CustomNamespaceMetricsProcessor(config, awsAccount);
+        CustomNamespaceMetricsProcessor processor = new CustomNamespaceMetricsProcessor(Arrays.asList(includeMetric), dimensions, "AWS/EC2");
         StatisticType statisticType = processor.getStatisticType(awsMetric);
         Assert.assertEquals(statisticType.getTypeName(), "Average");
 
@@ -120,7 +123,10 @@ public class CustomNamespaceMetricsProcessorTest {
 
     @Test
     public void getNamespace() {
-        CustomNamespaceMetricsProcessor processor = new CustomNamespaceMetricsProcessor(config, awsAccount);
+        IncludeMetric includeMetric = new IncludeMetric();
+        includeMetric.setName("testMetric");
+        includeMetric.setStatType("ave");
+        CustomNamespaceMetricsProcessor processor = new CustomNamespaceMetricsProcessor(Arrays.asList(includeMetric), dimensions, "AWS/EC2");
         String result = processor.getNamespace();
         Assert.assertEquals(result, "AWS/EC2");
     }
