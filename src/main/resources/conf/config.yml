@@ -1,0 +1,163 @@
+#prefix used to show up metrics in AppDynamics
+#metricPrefix: "Custom Metrics|AWS Custom Namespace|"
+
+#This will create it in specific Tier/Component. Make sure to replace <COMPONENT_ID> with the appropriate one from your environment.
+#To find the <COMPONENT_ID> in your environment, please follow the screenshot https://docs.appdynamics.com/display/PRO42/Build+a+Monitoring+Extension+Using+Java
+metricPrefix: "Server|Component:<COMPONENT_ID>|Custom Metrics|AWS Custom Namespace|"
+
+namespace: "AWS/EFS"
+
+accounts:
+  - awsAccessKey: ""
+    awsSecretKey: ""
+    displayAccountName: ""
+    regions: ["eu-central-1"]
+
+
+credentialsDecryptionConfig:
+    enableDecryption: "false"
+    encryptionKey:
+
+proxyConfig:
+    host:
+    port:
+    username:
+    password:
+
+# Filters based on dimensions, values accepts comma separated values and regex patterns. If `.*` is used, all are
+# monitored and if empty, none are monitored.
+dimensions:
+  - name: "FileSystemId"
+    displayName: "File System Id"
+    values: ["fs-fcac.*"]
+
+# Global metrics config for all accounts
+metricsConfig:
+
+    # By default, all metrics retrieved from cloudwatch are 'Average' values.
+    # This option allows you to override the metric type.
+    # Allowed statTypes are: ave, max, min, sum, samplecount. Irrespective of the metric type, value will still be reported as
+    # Observed value to the Controller
+
+   includeMetrics:
+     - name: "BurstCreditBalance"
+       alias: "BurstCreditBalance"
+       statType: "sum"
+       aggregationType: "AVERAGE"
+       timeRollUpType: "AVERAGE"
+       clusterRollUpType: "INDIVIDUAL"
+       delta: false
+       multiplier: 1
+     - name: "ClientConnections"
+       alias: "ClientConnections"
+       statType: "ave"
+       aggregationType: "AVERAGE"
+       timeRollUpType: "AVERAGE"
+       clusterRollUpType: "INDIVIDUAL"
+       delta: false
+       multiplier: 1
+     - name: "DataReadIOBytes"
+       alias: "DataReadIOBytes"
+       statType: "ave"
+       aggregationType: "AVERAGE"
+       timeRollUpType: "AVERAGE"
+       clusterRollUpType: "INDIVIDUAL"
+       delta: false
+       multiplier: 1
+     - name: "MetadataIOBytes"
+       alias: "MetadataIOBytes"
+       statType: "ave"
+       aggregationType: "AVERAGE"
+       timeRollUpType: "AVERAGE"
+       clusterRollUpType: "INDIVIDUAL"
+       delta: false
+       multiplier: 1
+     - name: "PercentIOLimit"
+       alias: "PercentIOLimit"
+       statType: "ave"
+       aggregationType: "AVERAGE"
+       timeRollUpType: "AVERAGE"
+       clusterRollUpType: "INDIVIDUAL"
+       delta: false
+       multiplier: 1
+     - name: "PermittedThroughput"
+       alias: "PermittedThroughput"
+       statType: "ave"
+       aggregationType: "AVERAGE"
+       timeRollUpType: "AVERAGE"
+       clusterRollUpType: "INDIVIDUAL"
+       delta: false
+       multiplier: 1
+     - name: "TotalIOBytes"
+       alias: "TotalIOBytes"
+       statType: "ave"
+       aggregationType: "AVERAGE"
+       timeRollUpType: "AVERAGE"
+       clusterRollUpType: "INDIVIDUAL"
+       delta: false
+       multiplier: 1
+
+   metricsTimeRange:
+     startTimeInMinsBeforeNow: 5
+     endTimeInMinsBeforeNow: 0
+
+   # Rate limit ( per second ) for GetMetricStatistics, default value is 400. https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_limits.html
+   getMetricStatisticsRateLimit: 400
+
+    #
+    # The max number of retry attempts for failed retryable requests
+    # (ex: 5xx error responses from a service) or throttling errors
+    #
+   maxErrorRetrySize: 0
+
+#Allowed values are Basic and Detailed. Refer https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-cloudwatch-new.html for more information
+# Basic will fire CloudWatch API calls every 5 minutes
+# Detailed will fire CloudWatch API calls every 1 minutes
+cloudWatchMonitoring: "Basic"
+
+concurrencyConfig:
+  noOfAccountThreads: 3
+  noOfRegionThreadsPerAccount: 3
+  noOfMetricThreadsPerRegion: 3
+  threadTimeOut: 30
+
+regionEndPoints:
+  us-east-1 : monitoring.us-east-1.amazonaws.com
+  us-east-2 : monitoring.us-east-2.amazonaws.com
+  us-west-1 : monitoring.us-west-1.amazonaws.com
+  us-west-2 : monitoring.us-west-2.amazonaws.com
+  ap-northeast-1 : monitoring.ap-northeast-1.amazonaws.com
+  ap-northeast-2: monitoring.ap-northeast-2.amazonaws.com
+  ap-northeast-3 : monitoring.ap-northeast-3.amazonaws.com
+  ap-south-1 : monitoring.ap-south-1.amazonaws.com
+  ap-southeast-1 : monitoring.ap-southeast-1.amazonaws.com
+  ap-southeast-2 : monitoring.ap-southeast-2.amazonaws.com
+  ca-central-1 : monitoring.ca-central-1.amazonaws.com
+  cn-north-1 : monitoring.cn-north-1.amazonaws.com.cn
+  cn-northwest-1 : monitoring.cn-northwest-1.amazonaws.com.cn
+  eu-central-1 : monitoring.eu-central-1.amazonaws.com
+  eu-west-1 : monitoring.eu-west-1.amazonaws.com
+  eu-west-2 : monitoring.eu-west-2.amazonaws.com
+  eu-west-3 : monitoring.eu-west-3.amazonaws.com
+  sa-east-1 : monitoring.sa-east-1.amazonaws.com
+  us-gov-west-1 : monitoring.us-gov-west-1.amazonaws.com
+
+controllerInfo:
+  controllerHost: ""
+  controllerPort: 8080
+  account: "customer1"
+  username: "user1"
+  password: "welcome"
+  encryptedPassword: ""
+  controllerSslEnabled: false
+  enableOrchestration: false
+  uniqueHostId: ""
+  accountAccessKey: ""
+  machinePath: ""
+  simEnabled: true
+  applicationName: ""
+  tierName: ""
+  nodeName: ""
+
+#Encryption key for your controllerInfo password
+encryptionKey: ""
