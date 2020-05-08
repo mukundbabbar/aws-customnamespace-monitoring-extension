@@ -1,4 +1,4 @@
-nameSpace: "AWS/EC2"
+namespace: "AWS/EC2"
 accounts:
   - awsAccessKey: "${EXT_AWS_ACCESS_KEY}"
     awsSecretKey: "${EXT_AWS_SECRET_KEY}"
@@ -81,7 +81,6 @@ controllerInfo:
     username: "user1"
     password: "welcome"
     encryptedPassword: ""
-    encryptionKey: ""
     controllerSslEnabled: false
     enableOrchestration: false
     uniqueHostId: ""

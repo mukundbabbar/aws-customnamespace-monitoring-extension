@@ -9,23 +9,22 @@
 package com.appdynamics.extensions.aws.customnamespace;
 
 import static com.appdynamics.extensions.aws.Constants.METRIC_PATH_SEPARATOR;
-import com.appdynamics.extensions.aws.MultipleNamespaceCloudwatchMonitor;
+import com.appdynamics.extensions.aws.SingleNamespaceCloudwatchMonitor;
 import com.appdynamics.extensions.aws.collectors.NamespaceMetricStatisticsCollector;
-import com.appdynamics.extensions.aws.config.Account;
 import com.appdynamics.extensions.aws.customnamespace.conf.CustomNamespaceConfiguration;
 import com.appdynamics.extensions.aws.metric.processors.MetricsProcessor;
 import com.appdynamics.extensions.logging.ExtensionsLoggerFactory;
+import com.appdynamics.extensions.util.AssertUtils;
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 /**
  * @author Florencio Sarmiento
  */
-public class CustomNamespaceMonitor extends MultipleNamespaceCloudwatchMonitor<CustomNamespaceConfiguration> {
+public class CustomNamespaceMonitor extends SingleNamespaceCloudwatchMonitor<CustomNamespaceConfiguration> {
 
 	private static final Logger LOGGER = ExtensionsLoggerFactory.getLogger("CustomNamespaceMonitor");
 
@@ -54,37 +53,22 @@ public class CustomNamespaceMonitor extends MultipleNamespaceCloudwatchMonitor<C
 	}
 
 	@Override
-	protected List<NamespaceMetricStatisticsCollector> getNamespaceMetricStatisticsCollectorList(CustomNamespaceConfiguration config) {
-
-		List<NamespaceMetricStatisticsCollector> collectors = Lists.newArrayList();
-
-		for (Account account : config.getAccounts()) {
-				MetricsProcessor metricsProcessor =  new CustomNamespaceMetricsProcessor(config.getMetricsConfig().getIncludeMetrics(),
+	protected NamespaceMetricStatisticsCollector getNamespaceMetricsCollector(CustomNamespaceConfiguration config) {
+		AssertUtils.assertNotNull(config.getDimensions(), "the dimensions for the namespace are empty");
+		AssertUtils.assertNotNull(config.getMetricsConfig().getIncludeMetrics(), "Metrics are not configured, please configure includeMetrics");
+		MetricsProcessor metricsProcessor =
+				new CustomNamespaceMetricsProcessor(config.getMetricsConfig().getIncludeMetrics(),
 						config.getDimensions(),
-						config.getNameSpace());
+						config.getNamespace());
 
-				NamespaceMetricStatisticsCollector collector = new NamespaceMetricStatisticsCollector
-						.Builder(Arrays.asList(account),
-                                config.getConcurrencyConfig(),
-								config.getMetricsConfig(),
-								metricsProcessor, config.getMetricPrefix())
-					.withCredentialsDecryptionConfig(config.getCredentialsDecryptionConfig())
-					.withProxyConfig(config.getProxyConfig())
-					.build();
-
-				collectors.add(collector);
-			}
-
-		if (collectors.isEmpty()) {
-			LOGGER.warn("No namespace is configured for monitoring");
-		}
-
-		return collectors;
-	}
-
-	@Override
-	protected int getNoOfNamespaceThreads(CustomNamespaceConfiguration config) {
-		return config.getConcurrencyConfig().getNoOfAccountThreads();
+		return new NamespaceMetricStatisticsCollector
+				.Builder(config.getAccounts(),
+				config.getConcurrencyConfig(),
+				config.getMetricsConfig(),
+				metricsProcessor, config.getMetricPrefix())
+				.withCredentialsDecryptionConfig(config.getCredentialsDecryptionConfig())
+				.withProxyConfig(config.getProxyConfig())
+				.build();
 	}
 
     @Override

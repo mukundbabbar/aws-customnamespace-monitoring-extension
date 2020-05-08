@@ -15,13 +15,13 @@ import com.appdynamics.extensions.aws.config.Configuration;
  */
 public class CustomNamespaceConfiguration extends Configuration {
 
-    private String nameSpace;
+    private String namespace;
 
-    public String getNameSpace() {
-        return nameSpace;
+    public String getNamespace() {
+        return namespace;
     }
 
-    public void setNameSpace(String nameSpace) {
-        this.nameSpace = nameSpace;
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
     }
 }
