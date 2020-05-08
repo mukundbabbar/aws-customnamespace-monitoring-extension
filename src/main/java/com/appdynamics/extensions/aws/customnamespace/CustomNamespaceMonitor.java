@@ -26,7 +26,7 @@ import java.util.Map;
  */
 public class CustomNamespaceMonitor extends SingleNamespaceCloudwatchMonitor<CustomNamespaceConfiguration> {
 
-	private static final Logger LOGGER = ExtensionsLoggerFactory.getLogger("CustomNamespaceMonitor");
+	private static final Logger LOGGER = ExtensionsLoggerFactory.getLogger(CustomNamespaceMonitor.class);
 
 	private static final String DEFAULT_METRIC_PREFIX = String.format("%s%s%s%s",
 			"Custom Metrics", METRIC_PATH_SEPARATOR, "AWS Custom Namespace", METRIC_PATH_SEPARATOR);
