@@ -12,3 +12,11 @@ src/lib/*.jar
 lib/*
 lib_7503/*.jar
 *terraform*
+
+.teamcity/*
+docker-compose.yml
+Dockerfile
+Dockerfile_WorkBench
+Makefile
+src/integration-test/*
+*.tf
