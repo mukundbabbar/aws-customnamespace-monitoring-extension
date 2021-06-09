@@ -178,9 +178,9 @@ Find out more in the [AppSphere](https://www.appdynamics.com/community/exchange/
 ## Version
    |          Name            |  Version   |
    |--------------------------|------------|
-   |Extension Version         |2.0.1       |
+   |Extension Version         |2.0.2       |
    |Controller Compatibility  |4.5+        |
    |Agent Compatibility       |4.5.13+     |
-   |Last Update               |29 Jan, 2021|
+   |Last Update               |05 Apr, 2021|
 
 List of changes to this extension can be found [here](https://github.com/Appdynamics/aws-customnamespace-monitoring-extension/blob/master/CHANGELOG.md)

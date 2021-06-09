@@ -1,5 +1,7 @@
-## 2.0.1 - Jan 29, 2021
+## 2.0.2 - Apr 05, 2021
+1. Updated extension to aws-cloudwatch-exts-commons 2.2.5
 
+## 2.0.1 - Jan 29, 2021
 1. Updated extension to aws-cloudwatch-exts-commons 2.2.4
 
 ## 2.0.0 - May 6, 2020
