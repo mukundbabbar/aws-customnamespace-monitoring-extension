@@ -156,9 +156,6 @@ Please follow the steps listed in this [troubleshooting document](https://commun
 
 Always feel free to fork and contribute any changes directly via [GitHub](https://github.com/Appdynamics/aws-customnamespace-monitoring-extension).
 
-## Community
-
-Find out more in the [AppSphere](https://www.appdynamics.com/community/exchange/extension/aws-customnamespace-monitoring-extension) community.
 
 ## Version
    |          Name            |  Version   |
