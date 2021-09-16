@@ -3,25 +3,27 @@
 ## Use Case
 Captures Custom Namespace statistics from Amazon CloudWatch and displays them in the AppDynamics Metric Browser.
 
-**Please do not use it for monitoring AWS services whose specific extension exists on [community exchange](https://www.appdynamics.com/community/exchange/).**  We have morre than 25 extensions to monitor different AWS services and specific extension provides more configurability and better monitoring.
+Before you configure this extension, you can take a look [here](https://developer.cisco.com/codeexchange/explore/#products=AppDynamics%20Extension) to see if any specific extension is available for your AWS services which you are planning to monitor. Using specific extension provides more configurability and better monitoring.
 
 ## Prerequisites
-Please give the following permissions to the account being used to with the extension. 
+1. Before the extension is installed, the prerequisites mentioned [here](https://community.appdynamics.com/t5/Knowledge-Base/Extensions-Prerequisites-Guide/ta-p/35213) need to be met. Please do not proceed with the extension installation if the specified prerequisites are not met.
+
+
+2. Please give the following permissions to the account being used to with the extension. 
 ```
         cloudwatch:ListMetrics
         cloudwatch:GetMetricStatistics
-        ec2:describeinstances
 ```
-1. Before the extension is installed, the prerequisites mentioned [here](https://community.appdynamics.com/t5/Knowledge-Base/Extensions-Prerequisites-Guide/ta-p/35213) need to be met. Please do not proceed with the extension installation if the specified prerequisites are not met.
-2. Please give the following permissions to the account being used to with the extension. **cloudwatch:ListMetrics cloudwatch:GetMetricStatistics**
 
 ## Installation
 
 1. Run `mvn clean install` from aws-customnamespace-monitoring-extension
-2. Copy and unzip AWSCustomNamespaceMonitor-\<version\>.zip from 'target' directory into \<MachineAgent_Home\>/monitors/ directory. Do not place the extension in the `extensions` directory of your Machine Agent installation directory.
+2. Copy and unzip AWSCustomNamespaceMonitor-\<version\>.zip from 'target' directory into \<MachineAgent_Home\>/monitors/ directory.
 3. Edit the config.yml file located at MachineAgent_Home/monitors/AWSCustomNamespaceMonitor and provide the required configuration (see Configuration section)
 4. The metricPrefix of the extension has to be configured as specified [here](https://community.appdynamics.com/t5/Knowledge-Base/How-do-I-troubleshoot-missing-custom-metrics-or-extensions/ta-p/28695#Configuring%20an%20Extension). Please make sure that the right metricPrefix is chosen based on your machine agent deployment, otherwise this could lead to metrics not being visible in the controller.
 5. Restart the Machine Agent.
+
+Please place the extension in the **"monitors"** directory of your **Machine Agent** installation directory. Do not place the extension in the **"extensions"** directory of your **Machine Agent** installation directory.
 
 ## Configuration
 In order to use the extension, you need to update the config.yml file that is present in the extension folder. The following is an explanation of the configurable fields that are present in the config.yml file.
@@ -32,6 +34,8 @@ In order to use the extension, you need to update the config.yml file that is pr
    
    `metricPrefix: "Server|Component:100|Custom Metrics|Amazon Custom Namespace|"`
    
+More details around metric prefix can be found [here](https://community.appdynamics.com/t5/Knowledge-Base/How-do-I-troubleshoot-missing-custom-metrics-or-extensions/ta-p/28695).
+
 2. Provide accessKey(required) and secretKey(required) of AWS account(s), also provide displayAccountName(any name that represents your account) and regions(required). If you are running this extension inside an EC2 instance which has IAM profile configured then awsAccessKey and awsSecretKey can be kept empty, extension will use IAM profile to authenticate.
   ``` 
    accounts:
@@ -73,28 +77,28 @@ In order to use the extension, you need to update the config.yml file that is pr
        values: ["ABC", "DEF"]
      - name: "AvailabilityZone"
        displayName: "Availability Zone"
-       values: []
+       values: [".*"]
     ```
    name is the dimension name and values are comma separated values of the dimension. displayName is the name with which it appears on the AppDynamics Metric Browser.
    If these fields are left empty, none of your instances will be monitored. In order to monitor everything under a dimension, you can simply use ".*" to pull everything from your AWS Environment.
    
 7. Configure the metrics section.
    
-        For configuring the metrics, the following properties can be used:
+For configuring the metrics, the following properties can be used:
    
-        |     Property      |   Default value |         Possible values         |                                              Description                                                                                                |
-        | :---------------- | :-------------- | :------------------------------ | :------------------------------------------------------------------------------------------------------------- |
-        | alias             | metric name     | Any string                      | The substitute name to be used in the metric browser instead of metric name.                                   |
-        | statType          | "ave"           | "AVERAGE", "SUM", "MIN", "MAX"  | AWS configured values as returned by API                                                                       |
-        | aggregationType   | "AVERAGE"       | "AVERAGE", "SUM", "OBSERVATION" | [Aggregation qualifier](https://docs.appdynamics.com/display/PRO44/Build+a+Monitoring+Extension+Using+Java)    |
-        | timeRollUpType    | "AVERAGE"       | "AVERAGE", "SUM", "CURRENT"     | [Time roll-up qualifier](https://docs.appdynamics.com/display/PRO44/Build+a+Monitoring+Extension+Using+Java)   |
-        | clusterRollUpType | "INDIVIDUAL"    | "INDIVIDUAL", "COLLECTIVE"      | [Cluster roll-up qualifier](https://docs.appdynamics.com/display/PRO44/Build+a+Monitoring+Extension+Using+Java)|
-        | multiplier        | 1               | Any number                      | Value with which the metric needs to be multiplied.                                                            |
-        | convert           | null            | Any key value map               | Set of key value pairs that indicates the value to which the metrics need to be transformed. eg: UP:0, DOWN:1  |
-        | delta             | false           | true, false                     | If enabled, gives the delta values of metrics instead of actual values.                                        |
+|     Property      |   Default value |         Possible values         |                                              Description                                                                                                |
+| :---------------- | :-------------- | :------------------------------ | :------------------------------------------------------------------------------------------------------------- |
+| alias             | metric name     | Any string                      | The substitute name to be used in the metric browser instead of metric name.                                   |
+| statType          | "ave"           | "AVERAGE", "SUM", "MIN", "MAX"  | AWS configured values as returned by API                                                                       |
+| aggregationType   | "AVERAGE"       | "AVERAGE", "SUM", "OBSERVATION" | [Aggregation qualifier](https://docs.appdynamics.com/display/latest/Build+a+Monitoring+Extension+Using+Java)    |
+| timeRollUpType    | "AVERAGE"       | "AVERAGE", "SUM", "CURRENT"     | [Time roll-up qualifier](https://docs.appdynamics.com/display/latest/Build+a+Monitoring+Extension+Using+Java)   |
+| clusterRollUpType | "INDIVIDUAL"    | "INDIVIDUAL", "COLLECTIVE"      | [Cluster roll-up qualifier](https://docs.appdynamics.com/display/latest/Build+a+Monitoring+Extension+Using+Java)|
+| multiplier        | 1               | Any number                      | Value with which the metric needs to be multiplied.|
+| convert           | null            | Any key value map               | Set of key value pairs that indicates the value to which the metrics need to be transformed. eg: UP:0, DOWN:1  |
+| delta             | false           | true, false                     | If enabled, gives the delta values of metrics instead of actual values.|
    
-       For example,
-       ```
+For example,
+```
        - name: "ConsumedReadCapacityUnits"
          alias: "Consumed Read Capacity Units"
          statType: "ave"
@@ -103,41 +107,41 @@ In order to use the extension, you need to update the config.yml file that is pr
          aggregationType: "AVERAGE"
          timeRollUpType: "AVERAGE"
          clusterRollUpType: "INDIVIDUAL"
-       ```
+```
        
-       **All these metric properties are optional, and the default value shown in the table is applied to the metric(if a property has not been specified) by default.**
+**All these metric properties are optional, and the default value shown in the table is applied to the metric(if a property has not been specified) by default.**
        
 8. For several services AWS CloudWatch does not instantly update the metrics but it goes back in time to update that information. 
    This delay sometimes can take upto 5 minutes. The extension runs every minute(Detailed) or every 5 minutes (Basic) and gets the latest value at that time.
    There may be a case where the extension may miss the value before CloudWatch updates it. In order to make sure we don't do that, 
    the extension has the ability to look for metrics during a certain interval, where we already have set it to default at 5 minutes but you can 
    change it as per your requirements. 
-       ```
+```
        metricsTimeRange:
          startTimeInMinsBeforeNow: 10
          endTimeInMinsBeforeNow: 5
-       ```
+```
   
 9. This field is set as per the defaults suggested by AWS. You can change this if your limit is different.
-       ```    
+ ```    
        getMetricStatisticsRateLimit: 400
-       ```
+```
 10. The maximum number of retry attempts for failed requests that can be retried. 
-        ```
+```
         maxErrorRetrySize: 3
-        ```
+```
 11. CloudWatch can be used in two formats, Basic and Detailed. You can specify how you would like to run the extension by specifying the chosen format here.
     By default, the extension is set to Basic, which makes the extension run every 5 minutes.
     Refer https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-cloudwatch-new.html for more information.
     
-        ```
+```
         #Allowed values are Basic and Detailed. 
         # Basic will fire CloudWatch API calls every 5 minutes
         # Detailed will fire CloudWatch API calls every 1 minutes
         cloudWatchMonitoring: "Basic"
-        ```
+```
 
-Please avoid using tab (\t) when editing yaml files. Please copy all the contents of the config.yml file and go to [Yaml Validator](http://www.yamllint.com/) . On reaching the website, paste the contents and press the “Go” button on the bottom left.                                                       
+Please avoid using tab (\t) when editing yaml files. Please copy all the contents of the config.yml file and go to [Yaml Validator](https://jsonformatter.org/yaml-validator) . On reaching the website, paste the contents and press the “Validate YAML” button.                                                       
 If you get a valid output, that means your formatting is correct and you may move on to the next step.
 
 ## Metrics
@@ -158,11 +162,10 @@ Always feel free to fork and contribute any changes directly via [GitHub](https:
 
 
 ## Version
-   |          Name            |  Version   |
-   |--------------------------|------------|
-   |Extension Version         |2.0.2       |
-   |Controller Compatibility  |4.5+        |
-   |Agent Compatibility       |4.5.13+     |
-   |Last Update               |05 Apr, 2021|
+|          Name            |  Version   |
+|--------------------------|------------|
+|Extension Version         |2.0.2       |
+|Last Update               |05/04/2021|
+|Changes list|[ChangeLog]((https://github.com/Appdynamics/aws-customnamespace-monitoring-extension/blob/master/CHANGELOG.md))|
 
-List of changes to this extension can be found [here](https://github.com/Appdynamics/aws-customnamespace-monitoring-extension/blob/master/CHANGELOG.md)
+**Note**: While extensions are maintained and supported by customers under the open-source licensing model, they interact with agents and Controllers that are subject to [AppDynamics’ maintenance and support policy](https://docs.appdynamics.com/latest/en/product-and-release-announcements/maintenance-support-for-software-versions). Some extensions have been tested with AppDynamics 4.5.13+ artifacts, but you are strongly recommended against using versions that are no longer supported.
