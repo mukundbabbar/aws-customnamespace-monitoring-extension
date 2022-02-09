@@ -21,7 +21,7 @@ jobs:
           settings-path: ${{ github.workspace }} # location for the settings.xml file
 
       - name: Step 3 - Run mvn build
-        run: mvn clean install
+        run: mvn clean install -DskipTests
 
       - name: Step 5 - Target folder content
         run: |
